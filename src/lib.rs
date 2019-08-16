@@ -108,6 +108,7 @@ struct TypeDef {
     vis: Option<String>,
     docs: Option<Docs>,
     derive: Vec<String>,
+    annotation: Vec<String>,
     bounds: Vec<Bound>,
 }
 
@@ -588,6 +589,12 @@ impl Struct {
         self
     }
 
+    /// Add a new annotation
+    pub fn annotation(&mut self, name: &str) -> &mut Self {
+        self.type_def.annotation(name);
+        self
+    }
+
     /// Push a named field to the struct.
     ///
     /// A struct can either set named fields with this function or tuple fields
@@ -959,6 +966,7 @@ impl TypeDef {
             docs: None,
             derive: vec![],
             bounds: vec![],
+            annotation: vec![],
         }
     }
 
@@ -983,6 +991,10 @@ impl TypeDef {
         self.derive.push(name.to_string());
     }
 
+    fn annotation(&mut self, name: &str) {
+        self.annotation.push(name.to_string());
+    }
+
     fn fmt_head(&self,
                 keyword: &str,
                 parents: &[Type],
@@ -993,6 +1005,7 @@ impl TypeDef {
         }
 
         self.fmt_derive(fmt)?;
+        self.fmt_annotation(fmt)?;
 
         if let Some(ref vis) = self.vis {
             write!(fmt, "{} ", vis)?;
@@ -1028,6 +1041,16 @@ impl TypeDef {
             }
 
             write!(fmt, ")]\n")?;
+        }
+
+        Ok(())
+    }
+
+    fn fmt_annotation(&self, fmt: &mut Formatter) -> fmt::Result {
+        if self.annotation.is_empty() {
+            for ann in &self.annotation {
+                write!(fmt, "{}\n", ann)?;
+            }
         }
 
         Ok(())
