@@ -140,6 +140,27 @@ struct Foo {
 }
 
 #[test]
+fn struct_with_annotation() {
+    let mut scope = Scope::new();
+
+    scope.new_struct("Foo")
+        .derive("Debug").derive("Clone")
+        .annotation("#[serde(rename = \"ErrorMsg\")]")
+        .field("one", "usize")
+        .field("two", "String");
+
+    let expect = r#"
+#[derive(Debug, Clone)]
+#[serde(rename = "ErrorMsg")]
+struct Foo {
+    one: usize,
+    two: String,
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
 fn struct_with_generics_1() {
     let mut scope = Scope::new();
 

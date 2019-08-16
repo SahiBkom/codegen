@@ -591,6 +591,7 @@ impl Struct {
 
     /// Add a new annotation
     pub fn annotation(&mut self, name: &str) -> &mut Self {
+        println!("struct add annotation");
         self.type_def.annotation(name);
         self
     }
@@ -993,6 +994,7 @@ impl TypeDef {
 
     fn annotation(&mut self, name: &str) {
         self.annotation.push(name.to_string());
+        println!("TypeDef add annotation {:?}", self.annotation);
     }
 
     fn fmt_head(&self,
@@ -1000,6 +1002,7 @@ impl TypeDef {
                 parents: &[Type],
                 fmt: &mut Formatter) -> fmt::Result
     {
+        println!("fmt_head");
         if let Some(ref docs) = self.docs {
             docs.fmt(fmt)?;
         }
@@ -1047,9 +1050,11 @@ impl TypeDef {
     }
 
     fn fmt_annotation(&self, fmt: &mut Formatter) -> fmt::Result {
-        if self.annotation.is_empty() {
+        println!("fmt_annotation {:?}", self.annotation);
+        if !self.annotation.is_empty() {
             for ann in &self.annotation {
                 write!(fmt, "{}\n", ann)?;
+                println!("{}\n", ann);
             }
         }
 
